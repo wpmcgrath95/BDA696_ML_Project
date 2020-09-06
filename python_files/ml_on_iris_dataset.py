@@ -10,7 +10,7 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import Normalizer, label_binarize
 from sklearn.svm import LinearSVC
 
-# import xgboost as xgb # dl was fine but cant run
+# import xgboost as xgb
 # from sklearn.pipeline import Pipeline
 
 
