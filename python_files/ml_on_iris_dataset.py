@@ -69,8 +69,8 @@ def main():
     # other plot
 
     # transform data using Normalizer and define X and y (targets)
-    co_variates = ["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"]
-    X_orig = data_df[co_variates].values
+    covariates = ["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"]
+    X_orig = data_df[covariates].values
     normalizer = Normalizer()
     X_trans = normalizer.fit_transform(X_orig)
     y = data_df["class"].values
@@ -110,6 +110,7 @@ def main():
         )
         pipeline.fit(X_orig,y)
     """
+    return None
 
 
 # call the function main() then exits giving the system the return code of main().
