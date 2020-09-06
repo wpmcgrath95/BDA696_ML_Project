@@ -100,7 +100,7 @@ def main():
         print("ROC for %s Using OneVsRestClassifier: %.3f" % (iris_plants[i], roc))
 
     """
-    # implement pipeline
+    # add pipeline
     print_heading("Model via Pipeline Predictions")
         pipeline = Pipeline(
             [
