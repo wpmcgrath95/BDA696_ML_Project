@@ -104,8 +104,10 @@ def main():
     print_heading("Model via Pipeline Predictions")
         pipeline = Pipeline(
             [
-                ("OneHotEncode",OneHotEncoder()),
+                ("Normalizer",Normalizer()),
+                ("LabelBinarize",label_binarize(y, classes=iris_plants)),
                 ("RandomForest",RandomForestClassifier(random_state=111)),
+                ("OneVsRest",OneVsRestClassifier(LinearSVC(random_state=111)))
             ]
         )
         pipeline.fit(X_orig,y)
