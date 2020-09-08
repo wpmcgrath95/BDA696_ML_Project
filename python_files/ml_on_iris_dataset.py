@@ -159,24 +159,30 @@ def main():
     print("LinearSVC Score: %.3f" % svc_pipeline.score(X_orig, y))
     print("", end="\n")
 
-    # encoded target col and preds to get area under ROC
+    # encoded target col and preds to get area under ROC Curve
     y_trans_encoded = OneHotEncoder(sparse=False).fit_transform(y.reshape(-1, 1))
     svc_preds_trans = OneHotEncoder(sparse=False).fit_transform(
         svc_preds.reshape(-1, 1)
     )
     rf_preds_trans = OneHotEncoder(sparse=False).fit_transform(rf_preds.reshape(-1, 1))
 
-    print("Target Performance (Area Under ROC)")
+    # calculates area under ROC curve for each target (3) and prints their performance
+    print("Each Target's Performance (Area Under ROC Curve)")
     for i in range(0, len(iris_plants)):
         roc = roc_auc_score(
             y_trans_encoded[:, i], rf_preds_trans[:, i], multi_class="ovr"
         )
-        print("ROC for %s Using RandomForest: %.3f" % (iris_plants[i], roc))
+        print(
+            "Area under ROC Curve for %s Using RandomForest: %.3f"
+            % (iris_plants[i], roc)
+        )
 
         roc = roc_auc_score(
             y_trans_encoded[:, i], svc_preds_trans[:, i], multi_class="ovr"
         )
-        print("ROC for %s Using LinearSVC: %.3f" % (iris_plants[i], roc))
+        print(
+            "Area under ROC Curve for %s Using LinearSVC: %.3f" % (iris_plants[i], roc)
+        )
 
     return None
 
