@@ -81,6 +81,9 @@ urllib3==1.25.10          # via requests
 virtualenv==20.0.31       # via pre-commit
 wcwidth==0.2.5            # via prompt-toolkit
 webencodings==0.5.1       # via bleach
+sklearn==0.0              # via machine learning models
+plotly==4.9.0             # via plots
+pandas==1.1.1             # via dataframes 
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

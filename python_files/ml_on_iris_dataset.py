@@ -1,3 +1,7 @@
+# Iris Machine Learning Assignment 1
+# Will McGrath
+# September 8, 2020
+
 import sys
 
 import numpy as np
@@ -5,17 +9,22 @@ import pandas as pd
 from plotly import express as px
 from plotly import graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, roc_auc_score
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.preprocessing import Normalizer, label_binarize
+from sklearn.metrics import log_loss, roc_auc_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import Normalizer, OneHotEncoder
 from sklearn.svm import LinearSVC
 
-# import xgboost as xgb
-# from sklearn.pipeline import Pipeline
+
+def print_heading(title):
+    print("*" * 80)
+    print(title)
+    print("*" * 80)
+    return None
 
 
 def main():
-    # pulling in the data
+    # pulling in the data and printing dataframe
+    print_heading("Pulling in Data and Printing Dataframe")
     data = pd.read_csv("./data/iris.data", header=None)
     data_df = pd.DataFrame(data).rename(
         columns={
@@ -29,24 +38,42 @@ def main():
     print(data_df)
 
     # summary statistics with numpy example
+    print_heading("Dataframe Stats")
     print(data_df.describe())
     assert (
         np.mean(data_df["sepal_len_cm"])
         == data_df.describe().loc["mean", "sepal_len_cm"]
     )
 
-    # scatter plot (can also save the direct html text instead of outputting plot)
-    fig = px.scatter(data_df, x="sepal_len_cm", y="sepal_wid_cm")
+    # define X and y (targets)
+    print_heading("Defining Covariates and Targets")
+    covariates = ["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"]
+    iris_plants = list(data_df["class"].unique())
+    X_orig = data_df[covariates].values
+    y = data_df["class"].values
+    print(f"Columns in Covariates: {covariates}")
+    print(f"Shape of Covariates: {X_orig.shape}")
+    print(f"Targets in Class Column: {iris_plants}")
+    print(f"Shape of Class Column: {y.shape}")
+
+    # scatter plots (can also save the direct html text instead of outputting plot)
+    # same as bivariate plots
+    print_heading("Plots")
+    print("In Browser")
+    fig = px.scatter_matrix(
+        data_df,
+        dimensions=["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"],
+        color="class",
+    )
     fig.show()
 
-    # violin plot with all columns
+    # violin plot
     fig = go.Figure()
-    iris_plants = data_df["class"].unique()
     for plant in iris_plants:
         fig.add_trace(
             go.Violin(
                 y=data_df["sepal_len_cm"][data_df["class"] == plant],
-                name=plant + " length",
+                name=plant + " Sepal Length",
                 box_visible=True,
                 meanline_visible=True,
             )
@@ -55,63 +82,98 @@ def main():
         fig.add_trace(
             go.Violin(
                 y=data_df["sepal_wid_cm"][data_df["class"] == plant],
-                name=plant + " width",
+                name=plant + " Sepal Width",
                 box_visible=True,
                 meanline_visible=True,
             )
         )
     fig.show()
 
-    # bar plots
+    # histograms plots
+    fig = px.histogram(data_df, x="petal_len_cm", color="class")
+    fig.show()
 
-    # other plot
+    fig = px.histogram(data_df, x="petal_wid_cm", color="class")
+    fig.show()
 
-    # other plot
+    # strip plot
+    fig = px.strip(data_df, x="petal_len_cm", y="class", orientation="h", color="class")
+    fig.show()
 
-    # transform data using Normalizer and define X and y (targets)
-    covariates = ["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"]
-    X_orig = data_df[covariates].values
-    normalizer = Normalizer()
-    X_trans = normalizer.fit_transform(X_orig)
-    y = data_df["class"].values
+    # parallel coordinates plot
+    # note: ['Iris-setosa': 0, 'Iris-versicolor':1, 'Iris-virginica':2]
+    plant_names, plant_indx = np.unique(data_df["class"], return_inverse=True)
+    fig = px.parallel_coordinates(
+        data_df,
+        color=plant_indx,
+        labels={
+            "color": "Plant",
+            "sepal_wid_cm": "Sepal Width",
+            "sepal_leng_cm": "Sepal Length",
+            "petal_wid_cm": "Petal Width",
+            "petal_len_cm": "Petal Length",
+        },
+        color_continuous_scale=px.colors.diverging.Tealrose,
+        color_continuous_midpoint=1,
+    )
 
-    # train/test with RandomForestClassifier
-    # if split data then could use criterion='entropy' (loss_function) to measure split
-    rf_clf = RandomForestClassifier(max_depth=5, random_state=111)
-    rf_clf.fit(X_trans, y)
-    y_pred = rf_clf.predict(X_trans)
-
-    # RandomForestClassifier performance
-    accuracy = accuracy_score(y, y_pred)
-    print("Accuracy using RandomForest: %.3f" % accuracy)
-
-    # trans targets (OneHotEncoder works as well but used usually for mult cols)
-    y_trans = label_binarize(y, classes=iris_plants)
-
-    # train/test using multiclassification (OneVsRestClassifier) with SVC
-    # support vector cld aka type of SVM with linear kernel
-    one_vs_rest_clf = OneVsRestClassifier(LinearSVC(random_state=111))
-    one_vs_rest_clf.fit(X_trans, y_trans)
-    y_pred = one_vs_rest_clf.predict(X_trans)
-
-    # OneVsRestClassifier preformance
-    for i in range(0, len(iris_plants)):
-        roc = roc_auc_score(y_trans[:, i], y_pred[:, i], multi_class="ovr")
-        print("ROC for %s Using OneVsRestClassifier: %.3f" % (iris_plants[i], roc))
-
-    """
-    # add pipeline
-    print_heading("Model via Pipeline Predictions")
-        pipeline = Pipeline(
-            [
-                ("Normalizer",Normalizer()),
-                ("LabelBinarize",label_binarize(y, classes=iris_plants)),
-                ("RandomForest",RandomForestClassifier(random_state=111)),
-                ("OneVsRest",OneVsRestClassifier(LinearSVC(random_state=111)))
-            ]
+    fig.update_layout(
+        coloraxis_colorbar=dict(
+            title="Plant", tickvals=list(set(plant_indx)), ticktext=plant_names
         )
-        pipeline.fit(X_orig,y)
-    """
+    )
+    fig.show()
+
+    # add pipeline
+    print_heading("Creating Pipelines")
+    rf_pipeline = Pipeline(
+        steps=[
+            ("Normalizer", Normalizer()),
+            ("RandomForest", RandomForestClassifier(random_state=0)),
+        ]
+    )
+
+    svc_pipeline = Pipeline(
+        steps=[
+            ("Normalizer", Normalizer()),
+            ("OneHotEncoder", OneHotEncoder()),
+            ("OneVsRestClassifer", LinearSVC(random_state=0)),
+        ]
+    )
+    print(rf_pipeline)
+    print(svc_pipeline)
+
+    print_heading("Pipeline Peformance")
+    rf_pipeline.fit(X_orig, y)
+    svc_pipeline.fit(X_orig, y)
+    rf_probs = rf_pipeline.predict_proba(X_orig)
+    rf_preds = rf_pipeline.predict(X_orig)
+    svc_preds = svc_pipeline.predict(X_orig)
+    print("", end="\n")
+
+    print("Overall Performance")
+    print("RandomForest Log-Loss:  %.3f" % log_loss(y, rf_probs))
+    print("RandomForest Score: %.3f" % rf_pipeline.score(X_orig, y))
+    print("LinearSVC Score: %.3f" % svc_pipeline.score(X_orig, y))
+    print("", end="\n")
+
+    y_trans_encoded = OneHotEncoder(sparse=False).fit_transform(y.reshape(-1, 1))
+    svc_preds_trans = OneHotEncoder(sparse=False).fit_transform(
+        svc_preds.reshape(-1, 1)
+    )
+    rf_preds_trans = OneHotEncoder(sparse=False).fit_transform(rf_preds.reshape(-1, 1))
+    print("Target Performance (Area Under ROC)")
+    for i in range(0, len(iris_plants)):
+        roc = roc_auc_score(
+            y_trans_encoded[:, i], rf_preds_trans[:, i], multi_class="ovr"
+        )
+        print("ROC for %s Using RandomForest: %.3f" % (iris_plants[i], roc))
+
+        roc = roc_auc_score(
+            y_trans_encoded[:, i], svc_preds_trans[:, i], multi_class="ovr"
+        )
+        print("ROC for %s Using LinearSVC: %.3f" % (iris_plants[i], roc))
+
     return None
 
 
