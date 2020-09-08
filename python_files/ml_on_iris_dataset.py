@@ -168,7 +168,7 @@ def main():
     rf_preds_trans = OneHotEncoder(sparse=False).fit_transform(rf_preds.reshape(-1, 1))
 
     # calculates area under ROC curve for each target (3) and prints their performance
-    # not adding ROC Curve plots since area is 1 so plots won
+    # not adding ROC Curve plots since area is 1 so plots won't be useful/interesting
     print("Each Target's Performance (Area Under ROC Curve)")
     for i in range(0, len(iris_plants)):
         roc = roc_auc_score(
