@@ -21,7 +21,7 @@
 
 - Clone repo: go to terminal and type `git clone https://github.com/wpmcgrath95/BDA696_ML_Project.git`
   - **Note**: Make sure you are in an empty directory, otherwise type `mkdir newdir`
-- Go into directory: `cd newdir`
+- Go into directory where repo is cloned: `cd newdir`
 - Run script: `./scripts/run-ml-code.sh`
-  - **Note**: If unable to run script, try typing `chmod +x ./scripts/run-ml-code.sh` and then  
+  - **Note**: If you are unable to run script, try typing `chmod +x ./scripts/run-ml-code.sh` and then  
      `./scripts/run-ml-code.sh`
