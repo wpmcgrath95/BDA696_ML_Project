@@ -29,7 +29,7 @@
 
 ## Setup for Users
 
-- Clone repo: open terminal and type `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
+- Clone repo: `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
   - **Note**: Make sure you are in an empty directory, otherwise type `mkdir newdir`
 - Go into the directory where the repo is cloned: `cd newdir`
 - Enter BDA696_ML_Project directory: `cd BDA696_ML_Project`
