@@ -43,6 +43,7 @@ def main():
     # summary statistics with numpy example
     print_heading("Dataframe Summary Statistics")
     print(data_df.describe())
+    # assert method is used to show that numpy and describe() get same results
     assert (
         np.mean(data_df["sepal_len_cm"])
         == data_df.describe().loc["mean", "sepal_len_cm"]
@@ -167,6 +168,7 @@ def main():
     rf_preds_trans = OneHotEncoder(sparse=False).fit_transform(rf_preds.reshape(-1, 1))
 
     # calculates area under ROC curve for each target (3) and prints their performance
+    # not adding ROC Curve plots since area is 1 so plots won
     print("Each Target's Performance (Area Under ROC Curve)")
     for i in range(0, len(iris_plants)):
         roc = roc_auc_score(
