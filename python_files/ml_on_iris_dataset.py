@@ -158,6 +158,7 @@ def main():
     print("LinearSVC Score: %.3f" % svc_pipeline.score(X_orig, y))
     print("", end="\n")
 
+    # encoded target col and preds to get area under ROC
     y_trans_encoded = OneHotEncoder(sparse=False).fit_transform(y.reshape(-1, 1))
     svc_preds_trans = OneHotEncoder(sparse=False).fit_transform(
         svc_preds.reshape(-1, 1)
