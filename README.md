@@ -29,9 +29,10 @@
 
 ## Setup for Users
 
-- Clone repo: open terminal and type `git clone https://github.com/wpmcgrath95/BDA696_ML_Project.git`
+- Clone repo: open terminal and type `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
   - **Note**: Make sure you are in an empty directory, otherwise type `mkdir newdir`
 - Go into the directory where the repo is cloned: `cd newdir`
+- Enter BDA696_ML_Project directory: `cd BDA696_ML_Project`
 - Run script: `./scripts/run-ml-code.sh`
   - **Note**: If you are unable to run script, try typing `chmod +x ./scripts/run-ml-code.sh` and then  
      `./scripts/run-ml-code.sh`
