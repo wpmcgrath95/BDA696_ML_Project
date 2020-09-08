@@ -16,6 +16,7 @@ from sklearn.svm import LinearSVC
 
 
 def print_heading(title):
+    # creates headers to divide outputs
     print("\n")
     print("*" * 80)
     print(title)
@@ -25,8 +26,8 @@ def print_heading(title):
 
 
 def main():
-    # pulling in the data and printing dataframe
-    print_heading("Pulling in Data and Printing Dataframe")
+    # pulls in the Iris dataset from a CSV and creates a dataframe
+    print_heading("Pulling in Data and Creating Dataframe")
     data = pd.read_csv("./data/iris.data", header=None)
     data_df = pd.DataFrame(data).rename(
         columns={
@@ -40,14 +41,14 @@ def main():
     print(data_df)
 
     # summary statistics with numpy example
-    print_heading("Dataframe Stats")
+    print_heading("Dataframe Summary Statistics")
     print(data_df.describe())
     assert (
         np.mean(data_df["sepal_len_cm"])
         == data_df.describe().loc["mean", "sepal_len_cm"]
     )
 
-    # define X and y (targets)
+    # defines X and y (class = target)
     print_heading("Defining Covariates and Targets")
     covariates = ["sepal_len_cm", "sepal_wid_cm", "petal_len_cm", "petal_wid_cm"]
     iris_plants = list(data_df["class"].unique())
@@ -126,7 +127,7 @@ def main():
     )
     fig.show()
 
-    # add pipeline
+    # adds pipeline
     print_heading("Creating Pipelines")
     rf_pipeline = Pipeline(
         steps=[
@@ -180,6 +181,6 @@ def main():
     return None
 
 
-# call the function main() then exits giving the system the return code of main().
+# calls the function main() then exits giving the system the return code of main().
 if __name__ == "__main__":
     sys.exit(main())
