@@ -16,9 +16,11 @@ from sklearn.svm import LinearSVC
 
 
 def print_heading(title):
+    print("\n")
     print("*" * 80)
     print(title)
     print("*" * 80)
+
     return None
 
 
@@ -149,7 +151,6 @@ def main():
     rf_probs = rf_pipeline.predict_proba(X_orig)
     rf_preds = rf_pipeline.predict(X_orig)
     svc_preds = svc_pipeline.predict(X_orig)
-    print("", end="\n")
 
     print("Overall Performance")
     print("RandomForest Log-Loss:  %.3f" % log_loss(y, rf_probs))
@@ -162,6 +163,7 @@ def main():
         svc_preds.reshape(-1, 1)
     )
     rf_preds_trans = OneHotEncoder(sparse=False).fit_transform(rf_preds.reshape(-1, 1))
+
     print("Target Performance (Area Under ROC)")
     for i in range(0, len(iris_plants)):
         roc = roc_auc_score(
