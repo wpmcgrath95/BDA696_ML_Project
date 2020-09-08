@@ -3,8 +3,9 @@
 ## Objectives
 
 - Download [Iris dataset](https://archive.ics.uci.edu/ml/datasets/iris) and calculate simple summary statistics
-- Plot the different classes using 5 different plots
+- Plot the different classes (targets) using 5 different plots
 - Analyze and build models using scikit-learn
+  - Multiclassification problem
   - No train/test split
 - Calculate performance using different metrics
 - Create a shell script that will run code for any user
