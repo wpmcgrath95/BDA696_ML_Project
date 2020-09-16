@@ -13,4 +13,4 @@ pip3 install -r requirements.txt
 pre-commit install
 pip-compile --output-file=requirements.dev.txt requirements.dev.in --upgrade
 
-python ./python_files/ml_on_iris_dataset.py
+./python_files/ml_on_iris_dataset.py

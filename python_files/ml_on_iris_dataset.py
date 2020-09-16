@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 # Iris Machine Learning Assignment 1
 # Will McGrath
 # September 8, 2020
 
+import os
 import sys
 
 import numpy as np
@@ -26,9 +28,13 @@ def print_heading(title):
 
 
 def main():
+    # trick to get the working folder of this file
+    this_dir = os.path.dirname(os.path.realpath(__file__))
+    file_loc = os.path.join(this_dir, "../data/iris.data")
+
     # pulls in the Iris dataset from a CSV and creates a dataframe
     print_heading("Pulling in Data and Creating Dataframe")
-    data = pd.read_csv("./data/iris.data", header=None)
+    data = pd.read_csv(file_loc, header=None)
     data_df = pd.DataFrame(data).rename(
         columns={
             0: "sepal_len_cm",
