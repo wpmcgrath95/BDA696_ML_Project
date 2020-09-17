@@ -34,6 +34,8 @@
 - Clone repo: `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
 - Enter into the BDA696_ML_Project directory: `cd BDA696_ML_Project`
 - Run script: `./scripts/run-ml-code.sh`
-  - **Note**: If you are unable to run the script, try
-    1. `chmod +x ./scripts/run-ml-code.sh`
-    2. `./scripts/run-ml-code.sh`
+  - If you're unable to run the script, try:
+    ```bash
+    `chmod +x ./scripts/run-ml-code.sh`
+    `./scripts/run-ml-code.sh`
+    ```
