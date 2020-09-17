@@ -30,12 +30,12 @@
 ## Setup for Users
 
 - Make sure you are in an empty directory, otherwise create one: `mkdir newdir`
-  - **Note**: Enter into the directory where repo will be cloned: `cd newdir`
+  - **Note**, enter into the directory where the repo will be cloned: `cd newdir`
 - Clone repo: `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
 - Enter into the BDA696_ML_Project directory: `cd BDA696_ML_Project`
 - Run script: `./scripts/run-ml-code.sh`
-  - If you're unable to run the script, try:
+  - **Note**, if you're unable to run the script, try:
     ```bash
-    `chmod +x ./scripts/run-ml-code.sh`
-    `./scripts/run-ml-code.sh`
+    chmod +x ./scripts/run-ml-code.sh
+    ./scripts/run-ml-code.sh
     ```
