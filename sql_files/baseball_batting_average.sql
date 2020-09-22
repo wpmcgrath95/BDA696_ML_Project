@@ -50,5 +50,3 @@ GROUP BY baseball.game.game_id, batter);
 
 SELECT *
 FROM baseball.BATTERS_ROLLING; 
-
-
