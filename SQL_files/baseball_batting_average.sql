@@ -40,13 +40,14 @@ Table: rolling table (BA over last 100 days)
 */
 DROP TABLE IF EXISTS BATTERS_ROLLING;
 CREATE TABLE BATTERS_ROLLING AS
-(SELECT baseball.game.game_id AS Game_ID, baseball.batter_counts.batter AS Batter, DATE(baseball.game.local_date) AS The_Date, 
-SUM(baseball.batter_counts.Hit) AS Hit_Sum,SUM(baseball.batter_counts.atBat) AS atBat_Sum, 
-SUM(baseball.batter_counts.Hit)/NULLIF(SUM(baseball.batter_counts.atBat), 0) AS Batting_AVG
-FROM baseball.game
-JOIN batter_counts ON baseball.game.game_id = baseball.batter_counts.game_id 
-WHERE DATE(baseball.game.local_date) >= DATE(ADDDATE(baseball.game.local_date, INTERVAL -100 DAY)) 
-GROUP BY baseball.game.game_id, batter); 
+(SELECT baseball.batter_counts.batter, baseball.batter_counts.Hit, baseball.batter_counts.atBat, baseball.game.local_date
+FROM baseball.batter_counts 
+JOIN game on baseball.batter_counts.game_id = baseball.game.game_id); 
 
-SELECT *
-FROM baseball.BATTERS_ROLLING;
+SELECT DATE(a.local_date) AS The_Date, DATE(ADDDATE(a.local_date, INTERVAL -100 DAY)) as Date_100_Days_Before, a.batter AS Batter, 
+(SELECT SUM(b.Hit)/NULLIF(SUM(b.atBat), 0)
+FROM baseball.BATTERS_ROLLING AS b
+WHERE DATEDIFF(a.local_date, b.local_date) BETWEEN 0 AND 100) AS Rolling_Window_Batting_AVG_100_Days
+FROM baseball.BATTERS_ROLLING AS a
+ORDER BY a.batter,a.local_date ASC
+LIMIT 0,20;
