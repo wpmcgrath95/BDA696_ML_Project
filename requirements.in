@@ -2,3 +2,5 @@ numpy
 plotly
 pandas
 sklearn
+pyspark
+requests
