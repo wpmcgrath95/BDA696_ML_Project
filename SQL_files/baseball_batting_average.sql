@@ -35,7 +35,7 @@ SELECT *
 FROM baseball.BATTERS_ANNUALLY;
 
 /*
-Table: rolling table (BA over last 100 days) 
+Table: rolling table (BA over last 100 days)
 */
 DROP TABLE IF EXISTS BATTERS_ROLLING;
 CREATE TABLE BATTERS_ROLLING AS
@@ -43,10 +43,10 @@ CREATE TABLE BATTERS_ROLLING AS
 FROM baseball.batter_counts 
 JOIN game on baseball.batter_counts.game_id = baseball.game.game_id); 
 
-SELECT DATE(a.local_date) AS The_Date, DATE(ADDDATE(a.local_date, INTERVAL -100 DAY)) as Date_100_Days_Before, a.batter AS Batter, 
-(SELECT SUM(b.Hit)/NULLIF(SUM(b.atBat), 0)
-FROM baseball.BATTERS_ROLLING AS b
-WHERE DATEDIFF(a.local_date, b.local_date) BETWEEN 0 AND 100) AS Rolling_Window_Batting_AVG_100_Days
+SELECT DATE(a.local_date) AS The_Date, DATE(ADDDATE(a.local_date, INTERVAL -100 DAY)) as Date_100_Days_Before, a.batter AS Batter,
+   (SELECT SUM(b.Hit)/NULLIF(SUM(b.atBat), 0)
+	FROM baseball.BATTERS_ROLLING AS b
+	WHERE DATEDIFF(a.local_date, b.local_date) BETWEEN 0 AND 100 AND b.batter = a.batter) AS Rolling_Window_Batting_AVG_100_Days
 FROM baseball.BATTERS_ROLLING AS a
-ORDER BY a.batter,a.local_date ASC
-LIMIT 0,20;
+ORDER BY a.local_date ASC 
+LIMIT 0,100;
