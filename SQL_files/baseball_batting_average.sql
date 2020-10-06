@@ -50,3 +50,12 @@ SELECT DATE(a.local_date) AS The_Date, DATE(ADDDATE(a.local_date, INTERVAL -100 
 FROM baseball.BATTERS_ROLLING AS a
 ORDER BY a.local_date ASC 
 LIMIT 0,100; 
+
+/*
+SELECT a.local_date, SUM(a.Hit)/nullif (SUM(a.atBat),0)
+FROM baseball.BATTERS_ROLLING AS a
+JOIN baseball.BATTERS_ROLLING AS b
+ON a.local_date WHERE DATEDIFF(a.local_date,b.local_date) BETWEEN 0 AND 100 AND a.batter=b.batter
+ORDER BY a.local_date ASC 
+LIMIT 0,20; # use join on itself instead of 2nd select
+*/
