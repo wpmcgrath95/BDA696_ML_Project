@@ -49,4 +49,4 @@ SELECT DATE(a.local_date) AS The_Date, DATE(ADDDATE(a.local_date, INTERVAL -100 
 	WHERE DATEDIFF(a.local_date, b.local_date) BETWEEN 0 AND 100 AND b.batter = a.batter) AS Rolling_Window_Batting_AVG_100_Days
 FROM baseball.BATTERS_ROLLING AS a
 ORDER BY a.local_date ASC 
-LIMIT 0,100; # use join on itself instead of 2nd select
+LIMIT 0,100; 
