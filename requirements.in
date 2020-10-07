@@ -3,3 +3,4 @@ plotly
 pandas
 sklearn
 pyspark
+statsmodels
