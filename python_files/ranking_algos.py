@@ -9,7 +9,7 @@ Description:
 1. Determine variable type for covariates (predictor) and target (response)
 2. Calculate the different ranking algos using:
     - p-value and t-score along with its plot
-    - Difference with mean of response along with its plot (weighted and unweighted)
+    - Diff with mean of response along with its plot (weighted and unweighted)
     - RandomForest Variable importance ranking
 3. Generate a table with all the variables and their rankings
 
@@ -48,16 +48,16 @@ class RankingAlgorithms(object):
     def print_heading(title):
         # creates headers to divide outputs
         print("\n")
-        print("*" * 80)
+        print("*" * 90)
         print(title)
-        print("*" * 80)
+        print("*" * 90)
 
         return None
 
     # determines predictors (X) and response (y) cols
     def get_pred_and_resp(self):
         text = "Please enter which column name you would like to use as your response"
-        self.print_heading("Choosing predictors and reponse variables")
+        self.print_heading("Choosing Predictors and Response Variables")
 
         while True:
             print(f"Columns: {self.dataset.columns.to_list()}")
@@ -76,7 +76,6 @@ class RankingAlgorithms(object):
     # determining column data type
     def data_type(self, feat):
         X_type = feat.convert_dtypes().dtypes
-        print(f"{feat.name} before: {X_type}")
 
         if X_type == np.float64:
             X_type = "continuous"
@@ -84,7 +83,7 @@ class RankingAlgorithms(object):
             X_type = "binary"
         else:
             X_type = "categorical"
-        print(f"{feat.name} after: {X_type}")
+        print(f"Predictor: {feat.name} {X_type} data type")
 
         return X_type
 
@@ -130,17 +129,14 @@ class RankingAlgorithms(object):
         return rf_model_fitted
 
     # continous response and continuous predictor plot
-    def plot_cont_resp_cont_pred(self, feat, y, **kwargs):
-        response = y.columns.to_list()[0]
-        response_name = self.dataset[response].name
-
+    def plot_cont_resp_cont_pred(self, feat, y, y_name, **kwargs):
         stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
         title_text = "Continuous Response by Continuous Predictor"
         fig = px.scatter(x=feat, y=y, trendline="ols")
         fig.update_layout(
             title=f"{title_text}: {stat_text}",
             xaxis_title=f"Predictor: {feat.name}",
-            yaxis_title=f"Response: {response_name}",
+            yaxis_title=f"Response: {y_name}",
         )
         fig.show()
         fig.write_html(
@@ -150,29 +146,29 @@ class RankingAlgorithms(object):
         return None
 
     # continous response and categorical predictor plot
-    def plot_cont_resp_cat_pred(self, feat, y, **kwargs):
+    def plot_cont_resp_cat_pred(self, feat, y, y_name, **kwargs):
         n = 200
-        response = y.columns.to_list()[0]
-        response_name = self.dataset[response].name
 
         # add noise to data
-        group_labels = [f"group_{int(i)}" for i in feat.unique()]
+        group_labels = [f"group_{int(i)}" for i in range(len(feat.unique()))]
         ele_group = pd.cut(feat.to_list(), bins=len(group_labels), labels=group_labels)
         temp_df = pd.DataFrame({"a": feat.values, "b": ele_group})
         temp_df["noise"] = temp_df["a"].values + np.random.normal(
             0, 1, len(temp_df["a"])
         )
         temp_df = temp_df.groupby("b")["noise"].apply(list).reset_index(name="agg")
+        temp_df = temp_df[temp_df["agg"].astype(bool)]
         group_list = temp_df["agg"].to_list()
+        group_labels = [f"group_{int(i)}" for i in range(1, len(temp_df["agg"]) + 1)]
         del temp_df
 
         # Create distribution plot with custom bin_size
         stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
         title_text = "Continuous Response by Categorical Predictor"
-        fig_1 = ff.create_distplot(group_list, group_labels, bin_size=2)
+        fig_1 = ff.create_distplot(group_list, group_labels, bin_size=0.2)
         fig_1.update_layout(
             title=f"{title_text}: {stat_text}",
-            xaxis_title=f"Response: {response_name}",
+            xaxis_title=f"Response: {y_name}",
             yaxis_title="Distribution",
         )
         fig_1.show()
@@ -194,7 +190,7 @@ class RankingAlgorithms(object):
         fig_2.update_layout(
             title=f"{title_text}: {stat_text}",
             xaxis_title="Groupings",
-            yaxis_title=f"Response: {response_name}",
+            yaxis_title=f"Response: {y_name}",
         )
         fig_2.show()
         fig_2.write_html(
@@ -204,16 +200,14 @@ class RankingAlgorithms(object):
         return None
 
     # categorical response and continuous predictor plot
-    def plot_cat_resp_cont_pred(self, feat, y, **kwargs):
+    def plot_cat_resp_cont_pred(self, feat, y, y_name, **kwargs):
         n = 200
-        response = y.columns.to_list()[0]
-        response_list = self.dataset[response].to_list()
-        response_name = self.dataset[response].name
+        response_list = self.dataset[y_name].to_list()
 
         # add noise to data
-        group_labels = [f"group_{int(i)}" for i in self.dataset[response].unique()]
+        group_labels = [f"group_{int(i)}" for i in self.dataset[y_name].unique()]
         ele_group = pd.cut(response_list, bins=len(group_labels), labels=group_labels)
-        temp_df = pd.DataFrame({"a": self.dataset[response], "b": ele_group})
+        temp_df = pd.DataFrame({"a": self.dataset[y_name], "b": ele_group})
         temp_df["noise"] = temp_df["a"].values + np.random.normal(
             0, 1, len(temp_df["a"])
         )
@@ -248,7 +242,7 @@ class RankingAlgorithms(object):
             )
         fig_2.update_layout(
             title=f"{title_text}: {stat_text}",
-            xaxis_title=f"Response: {response_name}",
+            xaxis_title=f"Response: {y_name}",
             yaxis_title=f"Predictor: {feat.name}",
         )
         fig_2.show()
@@ -259,19 +253,16 @@ class RankingAlgorithms(object):
         return None
 
     # categorical response and categorical predictor plot
-    def plot_cat_resp_cat_pred(self, feat, y, **kwargs):
-        response = y.columns.to_list()[0]
-        response_name = self.dataset[response].name
-
+    def plot_cat_resp_cat_pred(self, feat, y, y_name, **kwargs):
         # Create heatmap plot
-        conf_matrix = confusion_matrix(feat.values, self.dataset[response])
+        conf_matrix = confusion_matrix(feat.values, self.dataset[y_name])
         stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
         title_text = "Categorical Predictor by Categorical Response"
 
         fig = go.Figure(data=go.Heatmap(z=conf_matrix, zmin=0, zmax=conf_matrix.max()))
         fig.update_layout(
             title=f"{title_text}: {stat_text}",
-            xaxis_title=f"Response: {response_name}",
+            xaxis_title=f"Response: {y_name}",
             yaxis_title=f"Predictor: {feat.name}",
         )
         fig.show()
@@ -281,18 +272,34 @@ class RankingAlgorithms(object):
 
         return None
 
-    def generate_table():
+    def make_clickable(self, val):
+        # target _blank to open new window
+        return '<a target="_blank" href="{}">{}</a>'.format(val, val)
+
+    def generate_table(self):
         # return html_data
-        pass
+        main_df = pd.DataFrame(data={"Site": ["http://google.com"]}, columns=["Site"])
+        main_df.style.format({"url": self.make_clickable(val)})
+
+        return main_df
 
     def main(self):
         # inputing dataset and setting seed
         feat_impt = {}  # dict to hold feature_name: feature_importance
-        np.random.seed(seed=123)
+        np.random.seed(seed=1)
         X, y = self.get_pred_and_resp()
+        y_name = y.columns.to_list()[0]
         y_type = tot(y)
 
-        self.print_heading("Dataset Info")
+        self.print_heading("Dataset")
+        print(self.dataset)
+        print(f"Response: {y_name} {y_type} data type")
+        if y_type not in ["continuous", "binary"]:
+            print("\n")
+            print("Please choose a different response")
+            sys.exit(self.main())
+
+        self.print_heading("Dataset Stats")
         for idx, col in enumerate(X):
             feat = self.dataset[col]
             X_type = self.data_type(feat)
@@ -300,27 +307,26 @@ class RankingAlgorithms(object):
 
             if y_type == "continuous" and X_type == "continuous":
                 t_val, p_val = self.linear_regression_model(y, predictor)
-                self.plot_cont_resp_cont_pred(feat, y, t_val=t_val, p_val=p_val)
+                self.plot_cont_resp_cont_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             elif y_type == "continuous" and X_type == "categorical":
                 t_val, p_val = self.linear_regression_model(y, predictor)
-                # need better cutting system
-                self.plot_cont_resp_cat_pred(feat, y, t_val=t_val, p_val=p_val)
+                self.plot_cont_resp_cat_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             elif y_type == "continuous" and X_type == "binary":
                 t_val, p_val = self.linear_regression_model(y, predictor)
-                self.plot_cont_resp_cat_pred(feat, y, t_val=t_val, p_val=p_val)
+                self.plot_cont_resp_cat_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             elif y_type == "binary" and X_type == "continuous":
                 t_val, p_val = self.logistic_regression_model(y, predictor)
-                self.plot_cat_resp_cont_pred(feat, y, t_val=t_val, p_val=p_val)
+                self.plot_cat_resp_cont_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             elif y_type == "binary" and X_type == "categorical":
                 t_val, p_val = self.logistic_regression_model(y, predictor)
-                self.plot_cat_resp_cat_pred(feat, y, t_val=t_val, p_val=p_val)
+                self.plot_cat_resp_cat_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             else:
-                print(f"{feat.name} is not a binary or continuous data type")
+                print(f"{feat.name} isn't a binary or continuous data type")
 
         self.print_heading("Random Forest Feature Importance")
         rf_model = self.random_forest_model(X, y, y_type)
@@ -334,6 +340,7 @@ class RankingAlgorithms(object):
 
         # rf_impt_df.sort_values(by='Gini-importance').plot(kind='bar', rot=45)
         print(rf_impt_df)
+        print(self.generate_table())
 
 
 if __name__ == "__main__":
@@ -354,5 +361,5 @@ if __name__ == "__main__":
         else:
             print("Sorry I do not understand that")
 
-    print("No dataset was chosen so the Boston house-prices dataset will be used.")
+    print("No dataset was chosen so the Boston house-prices dataset will be used")
     sys.exit(RankingAlgorithms().main())
