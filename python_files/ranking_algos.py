@@ -17,11 +17,13 @@ Output: HTML based rankings report with links to the plots
     - table with all the variables and their rankings
 """
 
+import os
 import sys
 
 import numpy as np
 import pandas as pd
 import statsmodels.api
+from create_html_table import CreateHTMLTable
 from plotly import express as px
 from plotly import figure_factory as ff
 from plotly import graph_objects as go
@@ -45,7 +47,7 @@ class RankingAlgorithms(object):
             self.dataset["target"] = load_data.target
 
     @staticmethod
-    def print_heading(title):
+    def print_heading(title: str) -> str:
         # creates headers to divide outputs
         print("\n")
         print("*" * 90)
@@ -74,7 +76,7 @@ class RankingAlgorithms(object):
         return X, y
 
     # determining column data type
-    def data_type(self, feat):
+    def data_type(self, feat) -> str:
         X_type = feat.convert_dtypes().dtypes
 
         if X_type == np.float64:
@@ -138,10 +140,8 @@ class RankingAlgorithms(object):
             xaxis_title=f"Predictor: {feat.name}",
             yaxis_title=f"Response: {y_name}",
         )
-        fig.show()
-        fig.write_html(
-            file=f"plots/{feat.name}_scatter_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file = f"plots/{feat.name}_scatter_plot.html"
+        fig.write_html(file=plot_file, include_plotlyjs="cdn")
 
         return None
 
@@ -171,10 +171,8 @@ class RankingAlgorithms(object):
             xaxis_title=f"Response: {y_name}",
             yaxis_title="Distribution",
         )
-        fig_1.show()
-        fig_1.write_html(
-            file=f"plots/{feat.name}_distr_cont_resp_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file_1 = f"plots/{feat.name}_distr_cont_resp_plot.html"
+        fig_1.write_html(file=plot_file_1, include_plotlyjs="cdn")
 
         fig_2 = go.Figure()
         for curr_hist, curr_group in zip(group_list, group_labels):
@@ -192,10 +190,8 @@ class RankingAlgorithms(object):
             xaxis_title="Groupings",
             yaxis_title=f"Response: {y_name}",
         )
-        fig_2.show()
-        fig_2.write_html(
-            file=f"plots/{feat.name}_violin_cont_resp_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file_2 = f"plots/{feat.name}_violin_cont_resp_plot.html"
+        fig_2.write_html(file=plot_file_2, include_plotlyjs="cdn")
 
         return None
 
@@ -224,10 +220,8 @@ class RankingAlgorithms(object):
             xaxis_title=f"Predictor: {feat.name}",
             yaxis_title="Distribution",
         )
-        fig_1.show()
-        fig_1.write_html(
-            file=f"plots/{feat.name}_distr_cat_resp_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file_1 = f"plots/{feat.name}_distr_cat_resp_plot.html"
+        fig_1.write_html(file=plot_file_1, include_plotlyjs="cdn")
 
         fig_2 = go.Figure()
         for curr_hist, curr_group in zip(group_list, group_labels):
@@ -245,10 +239,8 @@ class RankingAlgorithms(object):
             xaxis_title=f"Response: {y_name}",
             yaxis_title=f"Predictor: {feat.name}",
         )
-        fig_2.show()
-        fig_2.write_html(
-            file=f"plots/{feat.name}_violin_cat_resp_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file_2 = f"plots/{feat.name}_violin_cat_resp_plot.html"
+        fig_2.write_html(file=plot_file_2, include_plotlyjs="cdn")
 
         return None
 
@@ -265,26 +257,25 @@ class RankingAlgorithms(object):
             xaxis_title=f"Response: {y_name}",
             yaxis_title=f"Predictor: {feat.name}",
         )
-        fig.show()
-        fig.write_html(
-            file=f"plots/{feat.name}_heatmap_cat_resp_plot.html", include_plotlyjs="cdn"
-        )
+        plot_file = f"plots/{feat.name}_heatmap_cat_resp_plot.html"
+        fig.write_html(file=plot_file, include_plotlyjs="cdn")
 
         return None
 
-    def make_clickable(self, val):
-        # target _blank to open new window
-        return '<a target="_blank" href="{}">{}</a>'.format(val, val)
-
-    def generate_table(self):
-        # return html_data
-        main_df = pd.DataFrame(data={"Site": ["http://google.com"]}, columns=["Site"])
-        main_df.style.format({"url": self.make_clickable(val)})
-
-        return main_df
-
     def main(self):
-        # inputing dataset and setting seed
+        # trick to get the working folder of this file
+        this_dir = os.path.dirname(os.path.realpath(__file__))
+        plot_path = os.path.join(this_dir, "../plots")
+        html_path = os.path.join(this_dir, "../html_files")
+
+        if not os.path.isdir(plot_path):
+            os.mkdir(plot_path)  # create plots directory
+            print("Directory '% s' created" % plot_path)
+
+        if not os.path.isdir(html_path):
+            os.mkdir(html_path)  # create plots directory
+            print("Directory '% s' created" % html_path)
+
         feat_impt = {}  # dict to hold feature_name: feature_importance
         np.random.seed(seed=1)
         X, y = self.get_pred_and_resp()
@@ -300,6 +291,8 @@ class RankingAlgorithms(object):
             sys.exit(self.main())
 
         self.print_heading("Dataset Stats")
+        info_dict = {}
+        feat_list, feat_type_list = [], []
         for idx, col in enumerate(X):
             feat = self.dataset[col]
             X_type = self.data_type(feat)
@@ -311,7 +304,6 @@ class RankingAlgorithms(object):
 
             elif y_type == "continuous" and X_type == "categorical":
                 t_val, p_val = self.linear_regression_model(y, predictor)
-                self.plot_cont_resp_cat_pred(feat, y, y_name, t_val=t_val, p_val=p_val)
 
             elif y_type == "continuous" and X_type == "binary":
                 t_val, p_val = self.linear_regression_model(y, predictor)
@@ -328,6 +320,16 @@ class RankingAlgorithms(object):
             else:
                 print(f"{feat.name} isn't a binary or continuous data type")
 
+            feat_list.append(feat.name)
+            feat_type_list.append(X_type)
+
+        # getting info and all plot paths
+        info_dict["response"] = [y_name] * len(feat_list)
+        info_dict["predictor"] = feat_list
+        info_dict["response_type"] = [y_type] * len(feat_list)
+        info_dict["predictor_type"] = feat_type_list
+        all_plot_paths = [os.path.join(plot_path, x) for x in os.listdir(plot_path)]
+
         self.print_heading("Random Forest Feature Importance")
         rf_model = self.random_forest_model(X, y, y_type)
 
@@ -337,10 +339,11 @@ class RankingAlgorithms(object):
         rf_impt_df = pd.DataFrame.from_dict(feat_impt, orient="index").rename(
             columns={0: "Gini-importance"}
         )
-
         # rf_impt_df.sort_values(by='Gini-importance').plot(kind='bar', rot=45)
         print(rf_impt_df)
-        print(self.generate_table())
+
+        self.print_heading("HTML Table With Plots")
+        CreateHTMLTable(info_dict, all_plot_paths).main()
 
 
 if __name__ == "__main__":
@@ -359,7 +362,7 @@ if __name__ == "__main__":
         elif val == "N":
             break
         else:
-            print("Sorry I do not understand that")
+            print("Sorry I don't understand that")
 
     print("No dataset was chosen so the Boston house-prices dataset will be used")
     sys.exit(RankingAlgorithms().main())
