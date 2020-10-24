@@ -262,6 +262,13 @@ class RankingAlgorithms(object):
 
         return None
 
+    def diff_with_mean_response(self, feat, y, y_name):
+        cut = pd.cut(feat, 10)
+        print(cut.value_counts())
+        print(f"Population Average Response: {self.dataset[y_name].mean()}")
+
+        return None
+
     def main(self):
         # trick to get the working folder of this file
         this_dir = os.path.dirname(os.path.realpath(__file__))
@@ -320,6 +327,9 @@ class RankingAlgorithms(object):
             else:
                 print(f"{feat.name} isn't a binary or continuous data type")
 
+            # difference with mean response
+            print("Bin Count")
+            self.diff_with_mean_response(feat, y, y_name)
             feat_list.append(feat.name)
             feat_type_list.append(X_type)
 
