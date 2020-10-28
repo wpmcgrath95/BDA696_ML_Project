@@ -24,7 +24,7 @@ Table: annual table (BA annually)
 */
 DROP TABLE IF EXISTS BATTERS_ANNUALLY;
 CREATE TABLE BATTERS_ANNUALLY AS
-(SELECT baseball.batter_counts.batter AS Batter, REPLACE(YEAR(baseball.game.local_date),',','') AS The_Year, 
+(SELECT baseball.batter_counts.batter AS Batter, REPLACE(YEAR(baseball.game.local_date),',','') AS The_Year,
 COUNT(baseball.batter_counts.batter) AS Batter_Count, SUM(baseball.batter_counts.Hit) AS Hit_Sum, SUM(baseball.batter_counts.atBat) AS atBat_Sum,
 SUM(baseball.batter_counts.Hit)/NULLIF(SUM(baseball.batter_counts.atBat), 0) AS Batting_AVG
 FROM baseball.batter_counts
