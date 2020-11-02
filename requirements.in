@@ -5,3 +5,5 @@ sklearn
 pyspark
 statsmodels
 webbrowser
+matplotlib
+mlxtend
