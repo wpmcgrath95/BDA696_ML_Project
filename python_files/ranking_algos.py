@@ -150,6 +150,8 @@ class RankingAlgorithms(object):
         n = 200
 
         # add noise to data
+        # SUPPOSED TO GET BIN MEAN AND POPULATION MEAN AS WELL (BINNING IS FINE)
+        # CATEGORICAL DATA IS IT'S OWN BIN
         group_labels = [f"group_{int(i)}" for i in range(len(feat.unique()))]
         ele_group = pd.cut(feat.to_list(), bins=len(group_labels), labels=group_labels)
         temp_df = pd.DataFrame({"a": feat.values, "b": ele_group})
