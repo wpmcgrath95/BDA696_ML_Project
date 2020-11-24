@@ -95,21 +95,6 @@ class Midterm(object):
 
         return t_val, p_val
 
-    # continous response and continuous predictor plot
-    def plot_cont_resp_cont_pred(self, feat, y, y_name, **kwargs):
-        stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
-        title_text = "Continuous Response by Continuous Predictor"
-        fig = px.scatter(x=feat, y=y, trendline="ols")
-        fig.update_layout(
-            title=f"{title_text}: {stat_text}",
-            xaxis_title=f"Predictor: {feat.name}",
-            yaxis_title=f"Response: {y_name}",
-        )
-        plot_file = f"plots/{feat.name}_scatter_plot.html"
-        fig.write_html(file=plot_file, include_plotlyjs="cdn")
-
-        return None
-
     def brute_force(self, X, y, y_type):
         if y_type == "binary":
             est = LinearRegression()
@@ -150,6 +135,21 @@ class Midterm(object):
         plt.show()
 
         return efs_df
+
+    # continous response and continuous predictor plot
+    def plot_cont_resp_cont_pred(self, feat, y, y_name, **kwargs):
+        stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
+        title_text = "Continuous Response by Continuous Predictor"
+        fig = px.scatter(x=feat, y=y, trendline="ols")
+        fig.update_layout(
+            title=f"{title_text}: {stat_text}",
+            xaxis_title=f"Predictor: {feat.name}",
+            yaxis_title=f"Response: {y_name}",
+        )
+        plot_file = f"plots/{feat.name}_scatter_plot.html"
+        fig.write_html(file=plot_file, include_plotlyjs="cdn")
+
+        return None
 
     # continous response and categorical predictor plot
     def plot_cont_resp_cat_pred(self, feat, y, y_name, **kwargs):
@@ -218,6 +218,7 @@ class Midterm(object):
         del temp_df
 
         # Create distribution plot with custom bin_size
+        # USE F-STAT AND P-VALUE FOR F-STAT FOR CATE RESP.
         stat_text = f'(t-value={kwargs["t_val"]}) (p-value={kwargs["p_val"]})'
         title_text = "Continuous Predictor by Categorical Response"
         fig_1 = ff.create_distplot(group_list, group_labels, bin_size=2)
@@ -268,12 +269,33 @@ class Midterm(object):
 
         return None
 
-    def diff_with_mean_response(self, feat, y, y_name):
-        cut = pd.cut(feat, 10)
-        print(cut.value_counts())
-        print(f"Population Average Response: {self.dataset[y_name].mean()}")
+    def diff_with_mean_response(self, feat, X_type, y_type, y_name):
+        if y_type == "continuous" and X_type == "continuous":
+
+            # might want to use histogram
+            cut = pd.cut(feat, 10)
+            vals = cut.value_counts(dropna=False)
+            print(cut.value_counts())
+            diff_mean_list = []
+            for i in self.dataset[y_name]:
+                if i > -0.1 and i <= 10.0:
+                    diff_mean_list.append(i)
+            print(np.mean(diff_mean_list))
+
+            avg_pop_mean = self.dataset[y_name].mean()
+            cut_df = vals.rename_axis("unique_values").reset_index(name="counts")
+            cut_df["pop_mean"] = [avg_pop_mean] * len(cut_df)
+            cut_df["bin_mean"] = cut_df["unique_values"].apply(
+                lambda x: x.astype(str).str.strip("()[]")
+            )
+
+            print(cut_df)
 
         return None
+
+    def knot_points(self):
+        # try out knot points take abs value of a var
+        pass
 
     def main(self):
         # trick to get the working folder of this file
@@ -316,6 +338,7 @@ class Midterm(object):
 
             elif y_type == "continuous" and X_type == "categorical":
                 t_val, p_val = self.linear_regression_model(y, predictor)
+                # error with plotting
 
             elif y_type == "continuous" and X_type == "binary":
                 t_val, p_val = self.linear_regression_model(y, predictor)
@@ -334,11 +357,11 @@ class Midterm(object):
 
             # difference with mean response
             print("Bin Count")
-            self.diff_with_mean_response(feat, y, y_name)
+            self.diff_with_mean_response(feat, X_type, y_type, y_name)
             feat_list.append(feat.name)
             feat_type_list.append(X_type)
 
-        # plot Correlation metrics
+        # plot correlation metrics
         self.print_heading("Correlation Metrics")
         corr_matrix = self.dataset.corr(method="pearson")
 
@@ -354,9 +377,9 @@ class Midterm(object):
         all_plot_paths = [os.path.join(plot_path, x) for x in os.listdir(plot_path)]
 
         # brute force
-        self.print_heading("Brute Force")
-        efs_df = self.brute_force(X, y, y_type)
-        print(efs_df)
+        # self.print_heading("Brute Force")
+        # efs_df = self.brute_force(X, y, y_type)
+        # print(efs_df)
 
         self.print_heading("HTML Table With Plots")
         CreateHTMLTable(info_dict, all_plot_paths).main()
