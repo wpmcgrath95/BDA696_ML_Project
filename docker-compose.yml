@@ -5,20 +5,20 @@ services:
     container_name: db-container
     restart: always
     volumes:
-        - db-data:/var/lib/mariadb
-        - base:/docker-entrypoint-initdb.d/
+      - db-data:/var/lib/mariadb
+      - base:/docker-entrypoint-initdb.d/
     networks:
-        - backend
+      - backend
     environment:
-        MYSQL_USER: user
-        MYSQL_PASSWORD: my_pass
-        MYSQL_DATABASE: baseball
-        MYSQL_ROOT_PASSWORD: my_pass
+      MYSQL_USER: user
+      MYSQL_PASSWORD: my_pass
+      MYSQL_DATABASE: baseball
+      MYSQL_ROOT_PASSWORD: my_pass
     ports:
-        - 5000:3306
+      - 5000:3306
 volumes:
-    db-data:
-    base:
+  db-data:
+  base:
 networks:
-    frontend:
-    backend:
+  frontend:
+  backend:

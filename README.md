@@ -34,5 +34,6 @@
 
 ## Setup for Docker:
 
-- Extract baseball.sql in root folder 
-- Run `./scripts/run-docker.sh`
+- Extract baseball.sql in root folder
+- Run `chmod +x ./scripts/run-docker.sh`
+- Then run `./scripts/run-docker.s`
