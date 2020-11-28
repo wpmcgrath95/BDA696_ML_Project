@@ -20,3 +20,4 @@ six==1.15.0               # via patsy, plotly, python-dateutil, retrying
 sklearn==0.0              # via -r requirements.in
 statsmodels==0.12.0       # via -r requirements.in
 threadpoolctl==2.1.0      # via scikit-learn
+Flask==1.1.1

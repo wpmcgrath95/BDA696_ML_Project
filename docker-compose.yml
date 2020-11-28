@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  batting_average_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: batting_average
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: "5000"
+      ENVIRONMENT: container
+    restart: unless-stopped

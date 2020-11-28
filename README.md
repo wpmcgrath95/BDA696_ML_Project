@@ -1,8 +1,8 @@
-# Using Docker to Recreate Batting Average From a SQL Database
+# Machine Learning Engineering
 
 ## Objectives
 
-- Recreate homework #2 in Docker
+- Machine Learning assignments from class BDA 696 at SDSU Fall '20
 
 ## Setup for Developement:
 
@@ -25,5 +25,13 @@
 
 - Make sure you are in an empty directory, otherwise create one: `mkdir newdir`
   - **Note**, enter into the directory where the repo will be cloned: `cd newdir`
-- Clone repo: `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
+- Clone repo: `git clone https://github.com/wpmcgrath95/BDA696_ML_Project.git`
 - Enter into the BDA696_ML_Project directory: `cd BDA696_ML_Project`
+
+## Setup for Docker:
+
+- IDK yet
+
+### Docker Objective
+
+- use Docker to recreate batting average from a SQL database
