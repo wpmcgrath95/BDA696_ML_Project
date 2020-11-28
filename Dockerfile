@@ -16,4 +16,4 @@ COPY baseball.sql .
 RUN docker container exec -i db-container mysql bb_db < baseball.sql -ppass
 
 # command to run on container start
-CMD ["sh", "run-docker.sh"]
+CMD ["sql", "rolling_batting_avg.sql"]
