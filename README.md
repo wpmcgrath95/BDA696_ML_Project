@@ -28,10 +28,11 @@
 - Clone repo: `git clone https://github.com/wpmcgrath95/BDA696_ML_Project.git`
 - Enter into the BDA696_ML_Project directory: `cd BDA696_ML_Project`
 
-## Setup for Docker:
-
-- IDK yet
-
 ### Docker Objective
 
-- use Docker to recreate batting average from a SQL database
+- Use Docker to recreate batting average from a SQL database
+
+## Setup for Docker:
+
+- Extract baseball.sql in root folder 
+- Run `./scripts/run-docker.sh`
