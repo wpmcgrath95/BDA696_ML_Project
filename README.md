@@ -36,4 +36,4 @@
 
 - Extract baseball.sql in root folder
 - Run `chmod +x ./scripts/run-docker.sh`
-- Then run `./scripts/run-docker.s`
+- Then run `./scripts/run-docker.sh`
