@@ -17,9 +17,3 @@ CREATE TABLE BATTERS_ROLLING AS
     WHERE g.local_date < '2011-04-04 15:05:00' AND bc.batter IN (SELECT Batter FROM batter_counts bc2 WHERE game_id = '12560')
 	GROUP BY Batter, g.game_id
 	ORDER BY Batter;
-
-SELECT 
-        Batter,
-        (sum(Hits)/sum(Atbats)) as BattingAvg
-FROM BATTERS_ROLLING
-GROUP BY Batter

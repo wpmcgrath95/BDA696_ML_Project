@@ -1,24 +1,32 @@
 version: "3.3"
 services:
-  db_service:
-    image: mariadb
-    container_name: db-container
+
+  code:
+    container_name: code
+    depends_on:
+      - db-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./results:/results
+    networks:
+      - backend
+
+  db-service:
+    image: linuxserver/mariadb:latest
+    container_name: db-service
     restart: always
     volumes:
-      - db-data:/var/lib/mariadb
-      - base:/docker-entrypoint-initdb.d/
+      - ./db:/config
     networks:
       - backend
     environment:
-      MYSQL_USER: user
-      MYSQL_PASSWORD: my_pass
-      MYSQL_DATABASE: baseball
-      MYSQL_ROOT_PASSWORD: my_pass
-    ports:
-      - 5000:3306
-volumes:
-  db-data:
-  base:
+      PUID: 1000
+      PGID: 1000
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+
 networks:
-  frontend:
   backend:
