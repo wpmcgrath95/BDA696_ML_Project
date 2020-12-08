@@ -37,3 +37,12 @@
 - Extract baseball.sql in root folder
 - Run `chmod +x ./scripts/run-docker.sh`
 - Then run `./scripts/run-docker.sh`
+
+### Run Specific File 
+- For example, to run ML project on Iris data:
+  - Run script for Iris data: `./scripts/run-ml-code.sh`
+    - **Note**, if you're unable to run the script, try:
+      ```bash
+      chmod +x ./scripts/run-ml-code.sh
+      ./scripts/run-ml-code.sh
+      ```
