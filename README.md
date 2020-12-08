@@ -1,14 +1,8 @@
-# Machine Learning on Iris Dataset
+# Machine Learning Engineering
 
 ## Objectives
 
-- Download [Iris dataset](https://archive.ics.uci.edu/ml/datasets/iris) and calculate simple summary statistics
-- Plot the different classes (targets) using 5 different plots
-- Analyze and build models using scikit-learn
-  - **Multiclassification problem**
-  - No train/test split
-- Calculate performance using different metrics
-- Create a shell script that will run code for any user
+- Machine Learning assignments from class BDA 696 at SDSU Fall '20
 
 ## Setup for Developement:
 
@@ -31,12 +25,24 @@
 
 - Make sure you are in an empty directory, otherwise create one: `mkdir newdir`
   - **Note**, enter into the directory where the repo will be cloned: `cd newdir`
-- Clone repo: `git clone -b Assignment_1 https://github.com/wpmcgrath95/BDA696_ML_Project.git`
+- Clone repo: `git clone https://github.com/wpmcgrath95/BDA696_ML_Project.git`
 - Enter into the BDA696_ML_Project directory: `cd BDA696_ML_Project`
-- Run script for Iris data: `./scripts/run-ml-code.sh`
-  - **Note**, if you're unable to run the script, try:
-    ```bash
-    chmod +x ./scripts/run-ml-code.sh
-    ./scripts/run-ml-code.sh
-    ```
-- Run script for assignment 4: `./scripts/run-ranking-algos.sh`
+
+### Docker Objective
+
+- Use Docker to recreate batting average from a SQL database
+
+## Setup for Docker:
+
+- Extract baseball.sql in root folder
+- Run `chmod +x ./scripts/run-docker.sh`
+- Then run `./scripts/run-docker.sh`
+
+### Run Specific File 
+- For example, to run ML project on Iris data:
+  - Run script for Iris data: `./scripts/run-ml-code.sh`
+    - **Note**, if you're unable to run the script, try:
+      ```bash
+      chmod +x ./scripts/run-ml-code.sh
+      ./scripts/run-ml-code.sh
+      ```

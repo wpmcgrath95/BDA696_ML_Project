@@ -1,0 +1,32 @@
+version: "3.3"
+services:
+
+  code:
+    container_name: code
+    depends_on:
+      - db-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./results:/results
+    networks:
+      - backend
+
+  db-service:
+    image: linuxserver/mariadb:latest
+    container_name: db-service
+    restart: always
+    volumes:
+      - ./db:/config
+    networks:
+      - backend
+    environment:
+      PUID: 1000
+      PGID: 1000
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+
+networks:
+  backend:

@@ -8,7 +8,6 @@ import webbrowser
 class CreateHTMLTable(object):
     def __init__(self, info_dict, plot_paths):
         self.plot_paths = plot_paths
-        self.num_of_plots = len(self.plot_paths)
         self.info_dict = info_dict
         self.num_of_preds = len(self.info_dict["predictor"])
 
@@ -19,9 +18,7 @@ class CreateHTMLTable(object):
         pred_row = "<td>" + self.info_dict["predictor"][i] + "</td>\n"
         resp_type_row = "<td>" + self.info_dict["response_type"][i] + "</td>\n"
         pred_type_row = "<td>" + self.info_dict["predictor_type"][i] + "</td>\n"
-        bin_row = "<td>" + "0" + "</td>\n"
-        mse_uw_row = "<td>" + "0" + "</td>\n"
-        mse_w_row = "<td>" + "0" + "</td>\n"
+        corr = "<td>" + str(self.info_dict["correlation"][i]) + "</td>\n"
 
         plot_list = []
         for path in self.plot_paths:
@@ -46,7 +43,7 @@ class CreateHTMLTable(object):
         indent = "</indent>\n"
 
         one_half = start + resp_row + pred_row + resp_type_row + pred_type_row
-        sec_half = bin_row + mse_uw_row + mse_w_row + plts_row + end + indent
+        sec_half = corr + plts_row + end + indent
 
         return one_half + sec_half
 
@@ -73,13 +70,7 @@ class CreateHTMLTable(object):
             + "Predictor Type"
             + """</th>
                         <th>"""
-            + "Bin Count"
-            + """</th>
-                        <th>"""
-            + "MSE Unweighted"
-            + """</th>
-                        <th>"""
-            + "MSE Weighted"
+            + "Correlation"
             + """</th>
                         <th>"""
             + "Plot1 URL"
