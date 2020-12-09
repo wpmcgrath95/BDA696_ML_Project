@@ -26,18 +26,37 @@ class CreateHTMLTable(object):
             if x:
                 plot_list.append(path)
 
-        if len(plot_list) > 1:
-            p1_row = (
-                "<td><a href=" + plot_list[0] + ">" + f"plot {i+1}" + "</a></td>" + "\n"
-            )
-            p2_row = (
-                "<td><a href=" + plot_list[1] + ">" + f"plot {i+1}" + "</a></td>" + "\n"
-            )
-            plts_row = p1_row + p2_row
-        else:
-            plts_row = (
-                "<td><a href=" + plot_list[0] + ">" + f"plot {i+1}" + "</a></td>" + "\n"
-            )
+        try:
+            if len(plot_list) > 1:
+                p1_row = (
+                    "<td><a href="
+                    + plot_list[0]
+                    + ">"
+                    + f"plot {i+1}"
+                    + "</a></td>"
+                    + "\n"
+                )
+                p2_row = (
+                    "<td><a href="
+                    + plot_list[1]
+                    + ">"
+                    + f"plot {i+1}"
+                    + "</a></td>"
+                    + "\n"
+                )
+                plts_row = p1_row + p2_row
+            else:
+                plts_row = (
+                    "<td><a href="
+                    + plot_list[0]
+                    + ">"
+                    + f"plot {i+1}"
+                    + "</a></td>"
+                    + "\n"
+                )
+        except IndexError:
+            t = "./plots/retweets_heatmap_cat_resp_plot.html"
+            plts_row = "<td><a href=" + t + ">" + f"plot {i+1}" + "</a></td>" + "\n"
 
         end = "</tr>\n"
         indent = "</indent>\n"
@@ -96,7 +115,7 @@ class CreateHTMLTable(object):
             with open("./html_files/html_table.html", "w") as file:
                 file.write(html_str)
         except FileNotFoundError:
-            print("Error no html_fil directory")
+            print("Error no html_files directory")
             sys.exit(CreateHTMLTable().main())
 
         webbrowser.open("file://" + os.path.realpath("./html_files/html_table.html"))

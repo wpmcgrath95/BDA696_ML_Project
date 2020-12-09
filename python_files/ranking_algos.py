@@ -38,6 +38,7 @@ class RankingAlgorithms(object):
     def __init__(self, data_file=None):
         if data_file:
             self.dataset = pd.read_csv(data_file)
+            self.dataset = self.dataset.dropna()
 
         else:
             load_data = datasets.load_boston()
@@ -335,11 +336,19 @@ class RankingAlgorithms(object):
             feat_list.append(feat.name)
             feat_type_list.append(X_type)
 
+        # plot correlation metrics
+        self.print_heading("Correlation Metrics")
+        corr_matrix = self.dataset.corr(method="pearson")
+
+        # get each feat corr metrics
+        print(corr_matrix.sort_values(y_name, ascending=False))
+
         # getting info and all plot paths
         info_dict["response"] = [y_name] * len(feat_list)
         info_dict["predictor"] = feat_list
         info_dict["response_type"] = [y_type] * len(feat_list)
         info_dict["predictor_type"] = feat_type_list
+        info_dict["correlation"] = corr_matrix[y_name].to_list()
         all_plot_paths = [os.path.join(plot_path, x) for x in os.listdir(plot_path)]
 
         self.print_heading("Random Forest Feature Importance")
@@ -352,7 +361,7 @@ class RankingAlgorithms(object):
             columns={0: "Gini-importance"}
         )
         # rf_impt_df.sort_values(by='Gini-importance').plot(kind='bar', rot=45)
-        print(rf_impt_df)
+        print(rf_impt_df["Gini-importance"].sort_values(ascending=False))
 
         self.print_heading("HTML Table With Plots")
         CreateHTMLTable(info_dict, all_plot_paths).main()

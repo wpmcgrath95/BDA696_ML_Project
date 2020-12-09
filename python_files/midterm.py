@@ -22,6 +22,7 @@ class Midterm(object):
     def __init__(self, data_file=None):
         if data_file:
             self.dataset = pd.read_csv(data_file)
+            self.dataset = self.dataset.dropna()
 
         else:
             load_data = datasets.load_boston()
@@ -395,7 +396,8 @@ if __name__ == "__main__":
                 sys.exit(Midterm(file).main())
             except FileNotFoundError:
                 print("Please enter in an existing CSV file location")
-            except ValueError:
+            except ValueError as err:
+                print(err)
                 print("Please enter in a CSV file")
 
         elif val == "N":
